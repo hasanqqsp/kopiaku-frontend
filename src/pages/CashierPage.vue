@@ -384,6 +384,9 @@ import { useSidebarStore } from '@/stores/sidebar'
 
 import { storeToRefs } from 'pinia'
 import { useMenuStore } from '@/stores/menus'
+import { useUserStore } from '@/stores/user'
+import { createTransactionAPI } from '@/utils/api'
+import { toast } from 'vue3-toastify'
 
 const sidebarStore = useSidebarStore()
 const { showSidebar } = storeToRefs(sidebarStore)
@@ -568,19 +571,19 @@ function checkout() {
   })
 
   // Transaction API integration - commented out for now
-  // const { currentUser } = useUserStore()
-  // createTransactionAPI({
-  //   userId: currentUser?.id || '',
-  //   menuItems: cart.value.map((item) => ({
-  //     menuId: item.id,
-  //     quantity: item.quantity,
-  //   })),
-  //   totalAmount: total.value,
-  //   status: 'UNVERIFIED',
-  //   transactionDate: new Date().toISOString(),
-  // }).then(() => {
-  //   toast.success('Transaction data saved')
-  // })
+  const { currentUser } = useUserStore()
+  createTransactionAPI({
+    userId: currentUser?.id || '',
+    menuItems: cart.value.map((item) => ({
+      menuId: item.id,
+      quantity: item.quantity,
+    })),
+    totalAmount: total.value,
+    status: 'UNVERIFIED',
+    transactionDate: new Date().toISOString(),
+  }).then(() => {
+    toast.success('Transaction data saved')
+  })
 
   showReceiptModal.value = true
   cart.value = []

@@ -52,6 +52,7 @@ import { h } from 'vue'
 import { useSidebarStore } from '@/stores/sidebar'
 
 import { storeToRefs } from 'pinia'
+import { useUserStore } from '@/stores/user'
 
 const sidebarStore = useSidebarStore()
 const { showSidebar } = storeToRefs(sidebarStore)
@@ -72,6 +73,8 @@ function makeIcon(d: string) {
       h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d }),
     ])
 }
+
+const { currentUser } = useUserStore()
 
 const items = [
   {
@@ -127,6 +130,14 @@ const items = [
     ),
   },
 ]
+if (currentUser && currentUser.role !== 'Admin') {
+  // Remove Employees and Stock Management for non-admin users
+  items.splice(
+    items.findIndex((item) => item.path === '/employee' || item.path === '/stock'),
+    1,
+  )
+  console.log(items)
+}
 </script>
 
 <style scoped>
