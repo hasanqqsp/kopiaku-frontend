@@ -3,7 +3,11 @@ import { defineStore } from 'pinia'
 
 export const useTransactionStore = defineStore('transactionStore', {
   state: () => ({
-    transactions: [],
+    transactions: [] as Array<{
+      id: string
+      transactionDate: string
+      totalAmount: number
+    }>,
     pageInfo: null,
     totalCount: 0,
     loading: false,

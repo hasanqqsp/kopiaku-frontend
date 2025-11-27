@@ -309,7 +309,7 @@
     >
       <div class="bg-white rounded-xl p-6 max-w-md w-full my-8">
         <h3 class="text-2xl font-bold mb-4">{{ shiftForm.id ? 'Edit Shift' : 'Assign Shift' }}</h3>
-        <form @submit.prevent="saveShift" class="space-y-4">
+        <form class="space-y-4">
           <div>
             <label class="block text-sm font-medium mb-2">Employee</label>
             <select
@@ -448,24 +448,15 @@ import SidebarComponent from '@/components/SidebarComponent.vue'
 import { reactive, ref, computed, onMounted } from 'vue'
 import { validatePresence as validatePresenceApi } from '@/utils/api'
 const employeeStore = useEmployeeStore()
-const { employees, pageInfo, loading, error } = storeToRefs(employeeStore)
+const { employees, loading, error } = storeToRefs(employeeStore)
 const presenceStore = usePresenceStore()
-const {
-  presences,
-  pageInfo: presencesPageInfo,
-  loading: presencesLoading,
-  error: presencesError,
-} = storeToRefs(presenceStore)
+const { presences } = storeToRefs(presenceStore)
 const isUpdating = ref(false)
 
 onMounted(() => {
   employeeStore.fetchUsers()
   presenceStore.fetchPresences()
 })
-
-function nextPage() {
-  employeeStore.loadNextPage()
-}
 
 function validatePresence(presenceId: string) {
   validatePresenceApi(presenceId).then(() => {
@@ -551,7 +542,6 @@ if (Object.keys(shifts).length === 0) {
 }
 
 // const employeeEntries = computed<[string, Employee][]>(() => Object.entries(employees))
-const shiftEntries = computed<[string, Shift][]>(() => Object.entries(shifts))
 
 // Employee Modal
 const showEmployeeModal = ref(false)
@@ -643,6 +633,8 @@ function saveEmployee() {
   closeEmployeeModal()
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const deleteDialog = createConfirmDialog(ConfirmDialog, {
   content: 'Delete this employee?',
 })
@@ -681,41 +673,28 @@ const shiftForm = reactive<{
   date: '',
   time: '',
 })
-function openShiftModal(id = '') {
-  if (id && shifts[id]) {
-    const shift = shifts[id]
-    Object.assign(shiftForm, {
-      id,
-      employeeId: shift.employeeId,
-      date: shift.date,
-      time: shift.time,
-    })
-  } else {
-    Object.assign(shiftForm, { id: '', employeeId: '', date: '', time: '' })
-  }
-  showShiftModal.value = true
-}
+
 function closeShiftModal() {
   showShiftModal.value = false
 }
-function saveShift() {
-  const id = shiftForm.id || `shift${Date.now()}`
-  const employeeName = employees[shiftForm.employeeId]?.name || ''
-  shifts[id] = {
-    employeeId: shiftForm.employeeId,
-    employeeName,
-    date: shiftForm.date,
-    time: shiftForm.time,
-    status: 'Assigned',
-  }
-  saveJSON('shifts', shifts)
-  closeShiftModal()
-}
-function deleteShift(id: string) {
-  if (!confirm('Delete this shift?')) return
-  delete shifts[id]
-  saveJSON('shifts', shifts)
-}
+// function saveShift() {
+//   const id = shiftForm.id || `shift${Date.now()}`
+//   const employeeName = employees[shiftForm.employeeId]?.name || ''
+//   shifts[id] = {
+//     employeeId: shiftForm.employeeId,
+//     employeeName,
+//     date: shiftForm.date,
+//     time: shiftForm.time,
+//     status: 'Assigned',
+//   }
+//   saveJSON('shifts', shifts)
+//   closeShiftModal()
+// }
+// function deleteShift(id: string) {
+//   if (!confirm('Delete this shift?')) return
+//   delete shifts[id]
+//   saveJSON('shifts', shifts)
+// }
 
 // History
 const historySearch = ref('')
@@ -742,11 +721,11 @@ type PresenceItem = {
   validated: boolean
 }
 const presenceRecord = ref<PresenceItem | null>(null)
-const activePhotoEmployee = computed<Employee | null>(() =>
-  activePhotoRecord.value
-    ? (employees.value.find((e) => e.id === activePhotoRecord.value!.employeeId) ?? null)
-    : null,
-)
+// const activePhotoEmployee = computed<Employee | null>(() =>
+//   activePhotoRecord.value
+//     ? (employees.value.find((e) => e.id === activePhotoRecord.value!.employeeId) ?? null)
+//     : null,
+// )
 function viewPhoto(index: number) {
   activePhotoIndex.value = index
   presenceRecord.value = presences.value[index] ?? null

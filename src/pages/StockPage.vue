@@ -211,6 +211,7 @@ function openAdd() {
 }
 
 function openEdit(name: string) {
+  console.log(name)
   // const item = stock.value[name]
   // if (!item) return
   // editingId.value = name

@@ -272,7 +272,7 @@ function continueToDashboard(): void {
       localStorage.setItem('lastCheckIn', JSON.stringify(response))
       router.push('/cashier')
     })
-    .catch((error) => {
+    .catch(() => {
       cameraError.value = 'Failed to verify photo. Please try again.'
     })
 }

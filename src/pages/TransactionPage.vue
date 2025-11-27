@@ -85,7 +85,7 @@
           </div>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-md">
-          <h3 class="text-xl font-semibold mb-4 text-gray-900">Riwayat Transaksi GoPay</h3>
+          <h3 class="text-xl font-semibold mb-4 text-gray-900">Riwayat Transaksi</h3>
           <div class="overflow-x-auto">
             <table class="w-full text-left table-auto">
               <thead>
@@ -110,9 +110,9 @@
                     'hover:bg-gray-100',
                   ]"
                 >
-                  <td class="py-3 px-6">{{ t.date }}</td>
+                  <td class="py-3 px-6">{{ new Date(t.transactionDate).toLocaleString() }}</td>
                   <td class="py-3 px-6">{{ t.id }}</td>
-                  <td class="py-3 px-6">Rp {{ t.amount.toLocaleString('id-ID') }}</td>
+                  <td class="py-3 px-6">Rp {{ t.totalAmount.toLocaleString('id-ID') }}</td>
                 </tr>
               </tbody>
             </table>
@@ -125,7 +125,11 @@
 
 <script setup lang="ts">
 import SidebarComponent from '@/components/SidebarComponent.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+
+onMounted(() => {
+  transactionsStore.fetchTransactions()
+})
 
 interface Transaction {
   date: string
@@ -133,13 +137,13 @@ interface Transaction {
   amount: number
 }
 
-const transactions = ref<Transaction[]>([])
 const selectedFile = ref<File | null>(null)
 const csvInput = ref<HTMLInputElement | null>(null)
 const uploadSuccess = ref(false)
 import { useSidebarStore } from '@/stores/sidebar'
 
 import { storeToRefs } from 'pinia'
+import { useTransactionStore } from '@/stores/transactions'
 
 const sidebarStore = useSidebarStore()
 const { showSidebar } = storeToRefs(sidebarStore)
@@ -211,8 +215,11 @@ function parseCSV(csv: string) {
       amount,
     })
   }
-  transactions.value = parsed
+  // transactions.value = parsed
 }
+
+const transactionsStore = useTransactionStore()
+const { transactions } = storeToRefs(transactionsStore)
 </script>
 
 <style scoped>

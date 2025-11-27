@@ -489,7 +489,8 @@ function executeSave() {
       isSaving.value = false
     })
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const deleteDialog = createConfirmDialog(ConfirmDialog, {
   content: 'Are you sure you want to delete this menu? This action cannot be undone.',
 })
